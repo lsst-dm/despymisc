@@ -8,4 +8,4 @@ version = __version__
 """
 
 from . import scamputil  
-from . import general 
+from . import miscutils

@@ -312,3 +312,4 @@ def query2dict_of_lists(query,dbhandle):
         querydic[key] = cols[k]    
 
     return querydic 
+

@@ -1,5 +1,5 @@
 __author__  = "Felipe Menanteau"
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 version = __version__
 
 """
@@ -9,3 +9,5 @@ version = __version__
 
 from . import scamputil  
 from . import miscutils
+from . import subprocess_utils
+from . import testing_http

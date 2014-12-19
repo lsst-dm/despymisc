@@ -3,7 +3,7 @@ from distutils.core import setup
 
 # The main call
 setup(name='despymisc',
-      version ='0.1.0',
+      version ='0.2.0',
       license = "GPL",
       description = "A set of handy Python-only simple utility functions for DESDM",
       author = "NCSA",

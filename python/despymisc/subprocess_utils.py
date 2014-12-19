@@ -3,8 +3,10 @@ A collection of utilities to call subprocess from multiprocess in python.
 F. Menanteau, NCSA, Dec 2014
 """
 
+import subprocess
+
 def work_subprocess(cmd):
-        
+
     """ Dummy function to call in multiprocess with shell=True """
     return subprocess.call(cmd,shell=True) 
 

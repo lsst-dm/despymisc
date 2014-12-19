@@ -10,4 +10,4 @@ version = __version__
 from . import scamputil  
 from . import miscutils
 from . import subprocess_utils
-from . import testing_http
+from . import http_requests

@@ -7,7 +7,7 @@ version = __version__
  Python-based modules
 """
 
-from . import scamputil  
-from . import miscutils
-from . import subprocess_utils
-from . import http_requests
+#from . import scamputil  
+#from . import miscutils
+#from . import subprocess_utils
+#from . import http_requests

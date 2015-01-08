@@ -17,43 +17,42 @@ import urllib, urllib2
 from base64 import b64encode
 
 
-# -----------------------------------------------------------------------------
+def download_file_des(url, filename):
 
-# import the credentials via serviceaccess from the local .desservices file if
-# possible
-
-try:
-    from despyserviceaccess import serviceaccess
-    creds = serviceaccess.parse(None, 'http-desarchive')
-    USERNAME = creds['user']
-    PASSWORD = creds['passwd']
-    URL = creds['url']
-except:
-    USERNAME = None
-    PASSWORD = None
-    URL = None 
-    print "WARNING: could not load credentials from .desservices.ini file -- make sure "
-
-# -----------------------------------------------------------------------------
-
-def download_file(url, filename):
+    ''' Download files using the DES services files
     '''
-    '''
-    req = Request()
+
+    # import the credentials via serviceaccess from the local .desservices file if
+    # possible
+    try:
+        from despyserviceaccess import serviceaccess
+        creds = serviceaccess.parse(None, 'http-desarchive')
+        USERNAME = creds['user']
+        PASSWORD = creds['passwd']
+        URL = creds['url']
+    except:
+        USERNAME = None
+        PASSWORD = None
+        URL = None 
+        print "WARNING: could not load credentials from .desservices.ini file -- make sure "
+
+    auth = (USERNAME, PASSWORD)
+    req = Request(auth)
     req.download_file(url, filename)
-
 
 class Request(object):
     '''
     '''
 
-    def __init__(self, auth=(USERNAME, PASSWORD)):
+    def __init__(self, auth):
+
+        # auth = (USERNAME, PASSWORD)
         self.auth = auth
         self.url = None 
         self.response = None
         self.error_status = (False, '')
 
-    def POST(self, url=URL, data=None):
+    def POST(self, url, data=None):
         ''' '''
         if not type(data)==dict:
             raise ValueError(('The data kwarg needs to be set and of type '
@@ -75,7 +74,7 @@ class Request(object):
         except Exception, e:
             self.error_status = (True, str(e))
 
-    def get_read(self, url=URL):
+    def get_read(self, url):
         ''' '''
         if not url:
             raise ValueError('You need to provide an url kwarg.')
@@ -97,7 +96,7 @@ class Request(object):
         with open(filename, 'wb') as f:
             f.write(self.get_read(url))
 
-    def GET(self, url=URL, params={}):
+    def GET(self, url, params={}):
         ''' '''
         if not url:
             raise ValueError('You need to provide an url kwarg.')

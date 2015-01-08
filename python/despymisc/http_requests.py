@@ -16,17 +16,14 @@ USAGE:
 import urllib, urllib2
 from base64 import b64encode
 
+def get_credentials(file,section='http-desarchive'):
 
-def download_file_des(url, filename):
-
-    ''' Download files using the DES services files
-    '''
-
-    # import the credentials via serviceaccess from the local .desservices file if
-    # possible
+    """
+    import the credentials via serviceaccess from the local .desservices file if possible
+    """
     try:
         from despyserviceaccess import serviceaccess
-        creds = serviceaccess.parse(None, 'http-desarchive')
+        creds = serviceaccess.parse(file, section)
         USERNAME = creds['user']
         PASSWORD = creds['passwd']
         URL = creds['url']
@@ -36,6 +33,14 @@ def download_file_des(url, filename):
         URL = None 
         print "WARNING: could not load credentials from .desservices.ini file -- make sure "
 
+    return USERNAME, PASSWORD, URL
+
+def download_file_des(url, filename):
+
+    ''' Download files using the DES services files
+    '''
+    # Get the credentials
+    USERNAME, PASSWORD, URL = get_credentials(file=None,section='http-desarchive')
     auth = (USERNAME, PASSWORD)
     req = Request(auth)
     req.download_file(url, filename)

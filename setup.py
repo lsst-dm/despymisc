@@ -1,5 +1,6 @@
 import distutils
 from distutils.core import setup
+import glob
 
 bin_files = glob.glob("bin/*.py") 
 #bin_files = bin_files + glob.glob("bin/*.txt")

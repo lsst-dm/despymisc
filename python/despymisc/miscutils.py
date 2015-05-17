@@ -10,26 +10,29 @@ import sys
 import datetime
 import inspect
 import errno
+from collections import OrderedDict
+from collections import Mapping
 
 """ Miscellaneous support functions for framework """
 
 #######################################################################
-def fwdebug(msglvl, envdbgvar, msgstr):
+def fwdebug(msglvl, envdbgvar, msgstr, msgprefix=''):
     """ print debugging message based upon thresholds """
     # environment debug variable overrides code set level
-    if envdbgvar in os.environ:
+
+    dbglvl = 0
+
+    if 'DESDM_DEBUG' in os.environ:   # global override
+        dbglvl = os.environ['DESDM_DEBUG']
+    elif envdbgvar in os.environ:
         dbglvl = os.environ[envdbgvar]
     elif '_' in envdbgvar:
         prefix = envdbgvar.split('_')[0]
         if '%s_DEBUG' % prefix in os.environ:
             dbglvl = os.environ['%s_DEBUG' % prefix]
-        else:
-            dbglvl = 0
-    else:
-        dbglvl = 0
 
     if int(dbglvl) >= int(msglvl): 
-        print "%s - %s - %s" % (datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), inspect.stack()[1][3], msgstr)
+        print "%s%s - %s - %s" % (msgprefix, datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"), inspect.stack()[1][3], msgstr)
 
 
 #######################################################################
@@ -73,20 +76,36 @@ def coremakedirs(thedir):
 
 
 #######################################################################
+CU_PARSE_HDU = 8
 CU_PARSE_PATH = 4
 CU_PARSE_FILENAME = 2
 CU_PARSE_EXTENSION = 1   # deprecating use CU_PARSE_COMPRESSION
 CU_PARSE_COMPRESSION = 1
+CU_PARSE_BASENAME = 0
 def parse_fullname(fullname, retmask = 2):
     fwdebug(3, 'FWUTILS_DEBUG', "fullname = %s" % fullname)
     fwdebug(3, 'FWUTILS_DEBUG', "retmask = %s" % retmask)
 
     VALID_COMPRESS_EXT = ['fz', 'gz']
 
+    hdu = None
     compress_ext = None
     filename = None
     path = None
     retval = []
+    parse_basename = False
+
+    # wants filename+compext returned as single string
+    if retmask & CU_PARSE_BASENAME:
+        parse_basename = True
+        retmask = CU_PARSE_FILENAME | CU_PARSE_COMPRESSION
+
+    # check for hdu 
+    m = re.match(r'(\S+)\[(\S+)\]$', fullname)
+    if m:
+        fullname = m.group(1)   # remove the hdu so it doesn't show up in filename
+        if retmask & CU_PARSE_HDU:
+            hdu = m.group(2)
 
     if retmask & CU_PARSE_PATH:
         #if '/' in fullname: # if given full path, canonicalize it
@@ -116,10 +135,15 @@ def parse_fullname(fullname, retmask = 2):
         fwdebug(3, 'FWUTILS_DEBUG', "Didn't match pattern for fits file with compress extension")
         compress_ext = None
 
-    if retmask & CU_PARSE_FILENAME:
-        retval.append(filename)
-    if retmask & CU_PARSE_COMPRESSION:
-        retval.append(compress_ext)
+    if parse_basename:
+        retval = filename + compress_ext
+    else:
+        if retmask & CU_PARSE_FILENAME:
+            retval.append(filename)
+        if retmask & CU_PARSE_COMPRESSION:
+            retval.append(compress_ext)
+        if retmask & CU_PARSE_HDU:
+            retval.append(hdu)
 
     if len(retval) == 0:
         retval = None
@@ -262,6 +286,16 @@ def dynamically_load_class(class_desc):
     dynclass = getattr(mod, importname)
     return dynclass
 
+#######################################################################
+def updateOrderedDict(d, u):
+    """ update dictionary recursively to update nested dictionaries """
+    for k, v in u.iteritems():
+        if isinstance(v, Mapping):
+            r = updateOrderedDict(d.get(k, OrderedDict()), v)
+            d[k] = r
+        else:
+            d[k] = u[k]
+    return d
 
 #######################################################################
 def get_list_directories(filelist):

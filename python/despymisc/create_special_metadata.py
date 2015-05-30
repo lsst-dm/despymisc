@@ -19,7 +19,7 @@ def create_band(filter):
     """ Create band from filter """
 
     band = filter.split(' ')[0]
-    if band not in intgdefs.VALID_BANDS:
+    if band not in VALID_BANDS:
         raise KeyError("filter yields invalid band")
     return band
 

@@ -38,6 +38,11 @@ class Xmlslurper:
 
         def char_data(text, data = self.data):
             if data['in_TD'] and self.data['curtable']:
+               # if already got partial data for this column
+               if data['fieldnames'][data['col']] in data['tables'][data['curtable']] and \
+                  data['tables'][data['curtable']][data['fieldnames'][data['col']]] is not None:
+                   text = str(data['tables'][data['curtable']][data['fieldnames'][data['col']]]) + text
+
                #print "TD data for ", data['fieldnames'][data['col']] , " is ", data
                if data['fieldarray'][data['col']] != None  and data['fieldtypes'][data['col']] != 'char':
                    vals = text.strip().split()

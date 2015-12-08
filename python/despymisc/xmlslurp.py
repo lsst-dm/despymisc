@@ -37,11 +37,12 @@ class Xmlslurper:
                 del self.data['fieldarray']
 
         def char_data(text, data = self.data):
+            prevtext = text
             if data['in_TD'] and self.data['curtable']:
                # if already got partial data for this column
                if data['fieldnames'][data['col']] in data['tables'][data['curtable']] and \
                   data['tables'][data['curtable']][data['fieldnames'][data['col']]] is not None:
-                   text = str(data['tables'][data['curtable']][data['fieldnames'][data['col']]]) + text
+                   text = data['prevtext'] + text
 
                #print "TD data for ", data['fieldnames'][data['col']] , " is ", data
                if data['fieldarray'][data['col']] != None  and data['fieldtypes'][data['col']] != 'char':
@@ -60,6 +61,7 @@ class Xmlslurper:
                    if data['fieldtypes'][data['col']] == 'float':
                        text = float(text)
                    data['tables'][data['curtable']][data['fieldnames'][data['col']]] = text
+            data['prevtext'] = prevtext
 
         self.data['wanted_tables'] = tablenames
         self.data['curtable'] = None
@@ -68,6 +70,7 @@ class Xmlslurper:
         self.data['in_TD'] = False
 
         p = xml.parsers.expat.ParserCreate()
+        #p.buffer_size=32768
         p.StartElementHandler = start_element
         p.EndElementHandler = end_element
         p.CharacterDataHandler = char_data

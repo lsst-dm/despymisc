@@ -13,7 +13,7 @@ import re
 import math
 
 
-VALID_BANDS = ['u','g','r','i','z','Y','VR']
+VALID_BANDS = ['u','g','r','i','z','Y','VR', 'N964']
 
 ######################################################################
 def create_band(filter):

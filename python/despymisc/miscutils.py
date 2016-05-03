@@ -13,6 +13,7 @@ import inspect
 import errno
 from collections import OrderedDict
 from collections import Mapping
+import logging
 
 """ Miscellaneous support functions for framework """
 
@@ -402,3 +403,10 @@ def query2dict_of_lists(query,dbhandle):
 
     return querydic
 
+
+def create_logger(level=logging.NOTSET,name='default'):
+    logging.basicConfig(level=level,
+                        format='[%(asctime)s] [%(levelname)s] %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S')
+    logger = logging.getLogger(name)
+    return logger

@@ -1,76 +1,133 @@
+#!/usr/bin/env python
+
 import xml.parsers.expat
 
 class Xmlslurper:
 
     def __init__(self, filename, tablenames):
-        
         self.data = {}
+        
 
+        ##################################################################
         def start_element(name, attrs, data = self.data):
             if "TABLE" == name:
-                #print "TABLE name=",  attrs['name']
+                # skip if not one of the desired tables
                 if not attrs['name'] in self.data['wanted_tables']:
                     return
+
+                # initialize values for a new table
                 data['curtable'] = attrs['name']
                 data['fieldnames'] = []
                 data['fieldtypes'] = []
                 data['fieldarray'] = []
-                data['tables'][data['curtable']] = {}
+                data['tables'][data['curtable']] = []
+
             if "FIELD" == name and self.data['curtable']:
-                #print "FIELD name=",   attrs['name']
+                # save description information
                 data['fieldnames'].append(attrs['name'].lower())
                 data['fieldtypes'].append(attrs['datatype'])
                 data['fieldarray'].append(attrs.get('arraysize',None))
+
             if "TR" == name:
-                data['col'] = 0
+                # new row, inialize row values
+                data['col'] = 0             # current column
+                data['prevcol'] = 0         # previous column 
+                data['prevtext'] = ''       # previous text parsed in case partial due to buffer
+                data['currow'] = {}         # dictionary to store info from row
+
             if "TD" == name:
+                # save state that are in a TD section
                 data['in_TD'] = True
 
+
+        ##################################################################
         def end_element(name, data = self.data):
+
             if "TD" == name:
+                # if closed TD section, change TD state
                 data['col'] += 1
                 data['in_TD'] = False
+
+            if "TR" == name and data['curtable']:
+                # save current row dictionary to current table
+                data['tables'][data['curtable']].append(data['currow'])
+
             if "TABLE" == name and data['curtable']:
+                # empty table variables
                 data['curtable'] = None
                 del self.data['fieldnames'] 
                 del self.data['fieldtypes']
                 del self.data['fieldarray']
 
+
+        ##################################################################
         def char_data(text, data = self.data):
             prevtext = text
-            if data['in_TD'] and self.data['curtable']:
-               # if already got partial data for this column
-               if data['fieldnames'][data['col']] in data['tables'][data['curtable']] and \
-                  data['tables'][data['curtable']][data['fieldnames'][data['col']]] is not None:
-                   text = data['prevtext'] + text
 
-               #print "TD data for ", data['fieldnames'][data['col']] , " is ", data
-               if data['fieldarray'][data['col']] != None  and data['fieldtypes'][data['col']] != 'char':
-                   vals = text.strip().split()
-                   #print "splits to:" , vals
-                   if data['fieldtypes'][data['col']] == 'int':
+            if data['in_TD'] and self.data['curtable']:
+                # if still same column, need to join with previous data
+                if data['prevcol'] == data['col']:
+                    text = data['prevtext'] + text
+
+                curarrsize = data['fieldarray'][data['col']]
+                curtype = data['fieldtypes'][data['col']]
+                curname = data['fieldnames'][data['col']]
+
+                if curarrsize != None and curtype != 'char':
+                    # data is for an array field
+                    # assumes array cannot be of strings
+                
+                    # so split into separate values
+                    vals = text.strip().split()
+
+                    # convert values to right type
+                    if curtype == 'int':
                         for i in range(0,len(vals)):
                             vals[i] = int(vals[i])
-                   elif data['fieldtypes'][data['col']] == 'float':
+                    elif curtype == 'float':
                         for i in range(0,len(vals)):
                             vals[i] = float(vals[i])
-                   data['tables'][data['curtable']][data['fieldnames'][data['col']]] = vals
-               else:
-                   if data['fieldtypes'][data['col']] == 'int':
-                       text = int(text)
-                   if data['fieldtypes'][data['col']] == 'float':
-                       text = float(text)
-                   data['tables'][data['curtable']][data['fieldnames'][data['col']]] = text
-            data['prevtext'] = prevtext
+                
+                    # save data array to current row data
+                    data['currow'][curname] = vals
+                else:
+                    # single value, convert to right type
+                    if curtype == 'int':
+                        val = int(text)
+                    elif curtype == 'float':
+                        val = float(text)
+                    else:
+                        val = text
 
+                    # save data array to current row data
+                    data['currow'][curname] = val
+
+                # save state for next char_data call
+                data['prevtext'] = prevtext
+                data['prevcol'] = data['col']
+
+
+        ##################################################################
+        # actual code for __init__
+
+        # initialize values
+        # which tables we want values from
         self.data['wanted_tables'] = tablenames
+
+        # name of table currently parsing
         self.data['curtable'] = None
         self.data['params'] = {}
+
+        # dictionary of tables 
+        #   tables are arrays of row dict
         self.data['tables'] = {}
-        self.data['in_TD'] = False
+        self.data['in_TD'] = False   # whether in TD section or not
 
         p = xml.parsers.expat.ParserCreate()
         #p.buffer_size=32768
+        p.buffer_size=2048
+
+        # assign functions to handler
         p.StartElementHandler = start_element
         p.EndElementHandler = end_element
         p.CharacterDataHandler = char_data
@@ -78,6 +135,7 @@ class Xmlslurper:
         f = open(filename,"r")
         p.ParseFile(f)
         f.close()
+
         #
         # clean out our bookkeeping
         #
@@ -85,6 +143,8 @@ class Xmlslurper:
         del self.data['wanted_tables'] 
         del self.data['in_TD']
 
+
+    ##################################################################
     def gettables(self):
         return self.data['tables']
 
@@ -93,6 +153,9 @@ class Xmlslurper:
     #
     def __getattr__(self,blah):
         return getattr(self.data['tables'], blah)
+
+
+
 
 if __name__ == "__main__":
     tablelist = (
@@ -103,9 +166,13 @@ if __name__ == "__main__":
             "PSF_Extensions",
             "PSF_Fields",
             "Warnings")
+    import sys
     import glob
     import pprint
     pp = pprint.PrettyPrinter(indent=4)
-    for f in glob.glob('*.xml'):
-        print "f: ", f
-        pp.pprint(Xmlslurper(f,tablelist).gettables())
+    if len(sys.argv) > 1:
+        pp.pprint(Xmlslurper(sys.argv[1],tablelist).gettables())
+    else:
+        for f in glob.glob('*.xml'):
+            print "f: ", f
+            pp.pprint(Xmlslurper(f,tablelist).gettables())

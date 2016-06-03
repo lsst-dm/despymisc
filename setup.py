@@ -7,7 +7,7 @@ bin_files = glob.glob("bin/*.py")
 
 # The main call
 setup(name='despymisc',
-      version ='1.0.2',
+      version ='1.0.3',
       license = "GPL",
       description = "A set of handy Python-only simple utility functions for DESDM",
       author = "Felipe Menanteau, Michelle Gower",

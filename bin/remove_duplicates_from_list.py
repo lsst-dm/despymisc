@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-# A very simple script to remove duplicates from a list.
+
+"""A very simple script to remove duplicates from a list.
+"""
 
 import sys
 

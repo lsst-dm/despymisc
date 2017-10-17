@@ -17,9 +17,7 @@ import signal
 
 
 class Popen(subprocess.Popen):
-    """
-    This class defines a superclass of the Popen module.
-    It defines a wait4 method for Popen.
+    """Superclass of the Popen module defining wait4 method.
     """
 
     def __init__(self, args, **kwargs):
@@ -27,9 +25,10 @@ class Popen(subprocess.Popen):
         subprocess.Popen.__init__(self, args, **kwargs)
 
     def wait4(self):
-        """ Wait for child process to terminate.
-            Returns returncode attribute."""
+        """Wait for child process to terminate.
 
+        Returns returncode attribute.
+        """
         while self.returncode is None:
             try:
                 (pid, sts, rusage) = os.wait4(self.pid, 0)

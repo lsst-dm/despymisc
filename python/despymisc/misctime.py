@@ -1,4 +1,5 @@
-""" Miscellaneous date/time utilities """
+"""Miscellaneous date/time utilities.
+"""
 
 import datetime
 from dateutil.parser import parse
@@ -6,12 +7,12 @@ from dateutil import tz
 
 
 def convert_utc_str_to_nite(datestr):
-    """
-    Convert an UTC date string to a nite string, but without using pytz
-    to avoid unnecessary dependancy. Translated from the old convert_utc_str_to_nite()
-    F. Menanteau.
-    """
+    """Convert an UTC date string to a nite string.
 
+    Convert an UTC date string to a nite string, but without using pytz to
+    avoid unnecessary dependancy. Translated from the old
+    convert_utc_str_to_nite() F. Menanteau.
+    """
     # e.g. datestr: 2014-08-15T17:31:02.416533+00:00
     nite = None
 

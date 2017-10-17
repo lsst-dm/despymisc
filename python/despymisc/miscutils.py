@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+"""Miscellaneous support functions for framework.
+"""
+
 import re
 import os
 import copy
@@ -9,10 +13,6 @@ import errno
 from collections import OrderedDict
 from collections import Mapping
 import logging
-
-""" Miscellaneous support functions for framework """
-
-#######################################################################
 
 
 def fwdebug(msglvl, envdbgvar, msgstr, msgprefix=''):
@@ -36,13 +36,11 @@ def fwdebug(msglvl, envdbgvar, msgstr, msgprefix=''):
     if fwdebug_check(msglvl, envdbgvar):
         fwdebug_print(msgstr, msgprefix)
 
-#######################################################################
-
 
 def fwdebug_check(msglvl, envdbgvar):
-    """ print debugging message based upon thresholds """
+    """Print debugging message based upon thresholds.
+    """
     # environment debug variable overrides code set level
-
     dbglvl = 0
 
     if 'DESDM_DEBUG' in os.environ:   # global override
@@ -56,17 +54,15 @@ def fwdebug_check(msglvl, envdbgvar):
 
     return int(dbglvl) >= int(msglvl)
 
-#######################################################################
-
 
 def fwdebug_print(msgstr, msgprefix=''):
     print "%s%s - %s - %s" % (msgprefix, datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
                               inspect.stack()[1][3], msgstr)
 
 
-#######################################################################
 def fwdie(msg, exitcode, depth=1):
-    """ abort after printing short message include some info from backtrace """
+    """Abort after printing short message include some info from backtrace.
+    """
     frame = inspect.stack()[depth]
     file = os.path.basename(frame[1])
     print "\n\n%s:%s:%s: %s" % (file, frame[3], frame[2], msg)
@@ -74,9 +70,9 @@ def fwdie(msg, exitcode, depth=1):
     sys.exit(exitcode)
 
 
-#######################################################################
 def fwsplit(fullstr, delim=','):
-    """ Split by delim and trim substrs, expand #:# into range """
+    """Split by delim and trim substrs, expand #:# into range.
+    """
     fullstr = re.sub('[()]', '', fullstr) # delete parens if exist
     items = []
     for item in [x.strip() for x in fullstr.split(delim)]:
@@ -89,9 +85,9 @@ def fwsplit(fullstr, delim=','):
     return items
 
 
-#######################################################################
 def coremakedirs(thedir):
-    """ Call os.makedirs handling path already exists """
+    """Call os.makedirs handling path already exists.
+    """
     if len(thedir) > 0 and not os.path.exists(thedir):  # some parallel filesystems really don't like
                                                         # trying to make directory if it already exists
         try:
@@ -104,7 +100,6 @@ def coremakedirs(thedir):
                 raise
 
 
-#######################################################################
 CU_PARSE_HDU = 8
 CU_PARSE_PATH = 4
 CU_PARSE_FILENAME = 2
@@ -189,7 +184,6 @@ def parse_fullname(fullname, retmask=2):
     return retval
 
 
-#######################################################################
 def convertBool(var):
     #print "Before:", var, type(var)
     newvar = None
@@ -282,8 +276,12 @@ def checkTrue(key, arg, default=True):
 ## PrettyPrinter doesn't work for certain nested dictionary (OrderedDict) cases
 ##     http://bugs.python.org/issue10592
 def pretty_print_dict(the_dict, out_file=None, sortit=False, indent=4):
-    """Outputs a given dictionary in a format easier for human reading where items within
-       the same sub-dictionary could be output in alphabetical order"""
+    """Output a dictionary in a human readable form.
+
+    Outputs a given dictionary in a format easier for human reading where
+    items within the same sub-dictionary could be output in alphabetical
+    order.
+    """
     if out_file is None:
         out_file = sys.stdout
     if the_dict is None:
@@ -294,7 +292,8 @@ def pretty_print_dict(the_dict, out_file=None, sortit=False, indent=4):
 
 
 def _recurs_pretty_print_dict(the_dict, out_file, sortit, inc_indent, curr_indent):
-    """Internal recursive function to do actual WCL writing"""
+    """Internal recursive function to do actual WCL writing.
+    """
     if len(the_dict) > 0:
         if sortit:
             dictitems = sorted(the_dict.items())
@@ -311,9 +310,9 @@ def _recurs_pretty_print_dict(the_dict, out_file, sortit, inc_indent, curr_inden
                     " = " + str(value)
 
 
-#######################################################################
 def get_config_vals(extra_info, config, keylist):
-    """ Search given dicts for specific values """
+    """Search given dicts for specific values.
+    """
     info = {}
     for k, stat in keylist.items():
         if extra_info is not None and k in extra_info:
@@ -328,12 +327,10 @@ def get_config_vals(extra_info, config, keylist):
             fwdie('Error: Could not find required key (%s)' % k, 1, 2)
     return info
 
-#######################################################################
-
 
 def dynamically_load_class(class_desc):
-    """ Loads class at runtime based upon given string description """
-
+    """Loads class at runtime based upon given string description.
+    """
     fwdebug(3, 'MISCUTILS_DEBUG', "class_desc = %s" % class_desc)
     modparts = class_desc.split('.')
     fromname = '.'.join(modparts[0:-1])
@@ -344,12 +341,10 @@ def dynamically_load_class(class_desc):
     dynclass = getattr(mod, importname)
     return dynclass
 
-#######################################################################
-
 
 def updateOrderedDict(d, u):
-    """ update dictionary recursively to update nested dictionaries """
-
+    """Update dictionary recursively to update nested dictionaries.
+    """
     for k, v in u.iteritems():
         if isinstance(v, Mapping):
             if d.__contains__(k):
@@ -362,8 +357,6 @@ def updateOrderedDict(d, u):
                 d[k] = copy.deepcopy(v)
         else:
             d[k] = copy.deepcopy(v)
-
-#######################################################################
 
 
 def get_list_directories(filelist):
@@ -379,11 +372,9 @@ def get_list_directories(filelist):
     return sorted(dirlist.keys())
 
 
-#########################################################################
-# Some functions added by Felipe Menanteau, coming from the old despyutils
-
 def elapsed_time(t1, verbose=False):
-    """ Formating of the elapsed time """
+    """Formating of the elapsed time.
+    """
     import time
     t2 = time.time()
     stime = "%dm %2.2fs" % (int((t2-t1)/60.), (t2-t1) - 60*int((t2-t1)/60.))
@@ -393,11 +384,11 @@ def elapsed_time(t1, verbose=False):
 
 
 def query2dict_of_lists(query, dbhandle):
-    """
+    """Converts the result of a query and db handle into a dictionary.
+
     Transforms the result of an SQL query and a Database handle object [dhandle]
     into a dictionary of lists
     """
-
     # Get the cursor from the DB handle
     cur = dbhandle.cursor()
     # Execute

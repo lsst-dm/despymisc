@@ -1,6 +1,6 @@
-
 def split_ahead_by_ccd(infile, outfile, ccd_list):
-    """
+    """Split .ahead file to include only a specific set of CCDs/HDUs.
+
     Function to take an .ahead (for SCAMP) and splits only those individual 
     HDUs/elements that correspond to CCDs requested.
 

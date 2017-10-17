@@ -8,7 +8,6 @@ class Xmlslurper:
     def __init__(self, filename, tablenames):
         self.data = {}
 
-        ##################################################################
         def start_element(name, attrs, data=self.data):
             if "TABLE" == name:
                 # skip if not one of the desired tables
@@ -39,7 +38,6 @@ class Xmlslurper:
                 # save state that are in a TD section
                 data['in_TD'] = True
 
-        ##################################################################
         def end_element(name, data=self.data):
 
             if "TD" == name:
@@ -58,7 +56,6 @@ class Xmlslurper:
                 del self.data['fieldtypes']
                 del self.data['fieldarray']
 
-        ##################################################################
         def char_data(text, data=self.data):
             prevtext = text
 
@@ -104,7 +101,6 @@ class Xmlslurper:
                 data['prevtext'] = prevtext
                 data['prevcol'] = data['col']
 
-        ##################################################################
         # actual code for __init__
 
         # initialize values
@@ -140,7 +136,6 @@ class Xmlslurper:
         del self.data['wanted_tables']
         del self.data['in_TD']
 
-    ##################################################################
     def gettables(self):
         return self.data['tables']
 

@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
+"""A simple method to compare the old vs new method to compute nite.
 """
-A simple method to compare the old vs new method to compute nite.
-F. Menanteau Nov, 2015
-"""
-
-###########################################
-# Functions for testing against old method
-
 
 def parse_json(filename):
     import json
@@ -29,16 +23,14 @@ def read_json(pattern):
         all_dates = all_dates + parse_json(file)
     return all_dates
 
-######################################################################
-
 
 def convert_utc_str_to_nite_old(datestr):
+    """Convert an UTC date string to a nite string.
+    """
     import pytz
     import datetime
     from dateutil.parser import parse
     from dateutil import tz
-
-    """ Convert an UTC date string to a nite string """
 
     # e.g. datestr: 2014-08-15T17:31:02.416533+00:00
     nite = None

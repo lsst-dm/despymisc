@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 
-"""
-Routine to call function that will take an .ahead file (for SCAMP) and split 
-out individual HDUs/CCD elements based on set of CCDs requested.
+"""Split .ahead file to include only a specific set of CCDs/HDUs.
+
+Routine calls function that takes an .ahead file (for SCAMP) and split out
+individual HDUs/CCD elements based on set of CCDs requested.
 """
 
 if __name__ == "__main__":

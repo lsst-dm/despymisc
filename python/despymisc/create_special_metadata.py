@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-"""
-Specialized functions for computing metadata
+
+"""Specialized functions for computing metadata.
 """
 
 import calendar
@@ -10,29 +10,25 @@ import math
 
 VALID_BANDS = ['u', 'g', 'r', 'i', 'z', 'Y', 'VR', 'N964']
 
-######################################################################
-
 
 def create_band(filter):
-    """ Create band from filter """
-
+    """Create band from filter.
+    """
     band = filter.split(' ')[0]
     if band not in VALID_BANDS:
         raise KeyError("filter yields invalid band")
     return band
 
 
-######################################################################
 def create_camsym(instrume):
-    """ Create band from filter """
-
+    """Create band from filter.
+    """
     return instrume[0]
 
 
-######################################################################
 def create_nite(date_obs):
-    """ Create nite from DATE-OBS """
-
+    """Create nite from DATE-OBS.
+    """
     # date_obs = 'YYYY-MM-DDTHH:MM:SS.S'
     v = date_obs.split(':')
     hh = int(v[0].split('-')[2][-2:])
@@ -53,10 +49,9 @@ def create_nite(date_obs):
     return nite
 
 
-######################################################################
 def create_field(object):
-    """ create the field from OBJECT """
-
+    """Create the field from OBJECT.
+    """
     m = re.search(" hex (\S+)", object)
     if m:
         field = m.group(1)
@@ -65,21 +60,18 @@ def create_field(object):
 
     return field
 
-######################################################################
-
 
 def convert_ra_to_deg(ra):
-    """ Return RA in degrees """
-
+    """Return RA in degrees.
+    """
     xx = map(float, ra.split(':'))
     radeg = 15.0 * (xx[0] + xx[1]/60.0 + xx[2]/3600.0)
     return round(radeg, 6)
 
 
-######################################################################
 def convert_dec_to_deg(dec):
-    """ Return DEC in degrees """
-
+    """Return DEC in degrees.
+    """
     lteldec = dec.split(':')
     firstchar = lteldec[0][0]
     xx = map(float, lteldec)
@@ -89,8 +81,6 @@ def convert_dec_to_deg(dec):
         tdecsgn = 1.
     tdecdeg = tdecsgn * (abs(xx[0]) + xx[1]/60.0 + xx[2]/3600.0)
     return round(tdecdeg, 6)
-
-######################################################################
 
 
 def fwhm_arcsec(farglist):

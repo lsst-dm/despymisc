@@ -1,5 +1,4 @@
-'''
-Library module providing an easy-to-use API for http requests to DESDM services.
+"""Module providing an easy-to-use API for http requests to DESDM services.
 
 Loads credentials from a desfile storing credentials (.desservices.ini, by
 default assumed to be in the users home directory).
@@ -10,7 +9,7 @@ USAGE:
     http_requests.download_file_des('http://www.blabla.net/foo.xyz', 'blabla.xyz')
 
 :author: michael h graber, michael.graber@fhnw.ch
-'''
+"""
 
 import os
 import urllib
@@ -20,9 +19,7 @@ from base64 import b64encode
 
 def get_credentials(desfile=os.path.join(os.environ['HOME'], '.desservices.ini'),
                     section='http-desarchive'):
-    """
-    Load the credentials using serviceaccess from a local .desservices file
-    if possible.
+    """Load the credentials using serviceaccess from a local .desservices file.
     """
 
     try:
@@ -43,8 +40,8 @@ def get_credentials(desfile=os.path.join(os.environ['HOME'], '.desservices.ini')
 
 
 def download_file_des(url, filename, desfile=None, section='http-desarchive'):
-    ''' Download files using the DES services files.
-    '''
+    """Download files using the DES services files.
+    """
     # Get the credentials
     USERNAME, PASSWORD, URL = get_credentials(desfile=desfile, section=section)
     auth = (USERNAME, PASSWORD)
@@ -53,8 +50,8 @@ def download_file_des(url, filename, desfile=None, section='http-desarchive'):
 
 
 class Request(object):
-    '''
-    '''
+    """
+    """
 
     def __init__(self, auth):
 
@@ -65,7 +62,8 @@ class Request(object):
         self.error_status = (False, '')
 
     def POST(self, url, data=None):
-        ''' '''
+        """
+        """
         if not type(data) == dict:
             raise ValueError(('The data kwarg needs to be set and of type '
                               'dictionary.'))
@@ -87,7 +85,8 @@ class Request(object):
             self.error_status = (True, str(e))
 
     def get_read(self, url):
-        ''' '''
+        """
+        """
         if not url:
             raise ValueError('You need to provide an url kwarg.')
         else:
@@ -104,12 +103,14 @@ class Request(object):
             self.error_status = (True, str(e))
 
     def download_file(self, url, filename):
-        ''' '''
+        """
+        """
         with open(filename, 'wb') as f:
             f.write(self.get_read(url))
 
     def GET(self, url, params={}):
-        ''' '''
+        """
+        """
         if not url:
             raise ValueError('You need to provide an url kwarg.')
         else:

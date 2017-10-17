@@ -6,16 +6,19 @@ F. Menanteau Nov, 2015
 """
 
 ###########################################
-# Functions for testing against old method 
+# Functions for testing against old method
+
+
 def parse_json(filename):
     import json
     dates = []
-    with open(filename) as data_file:    
+    with open(filename) as data_file:
         data = json.load(data_file)
-        
+
     dates = [item['date'] for item in data["exposures"]]
     dates.append(data['header']['createdAt'])
     return dates
+
 
 def read_json(pattern):
     import glob
@@ -27,6 +30,8 @@ def read_json(pattern):
     return all_dates
 
 ######################################################################
+
+
 def convert_utc_str_to_nite_old(datestr):
     import pytz
     import datetime
@@ -65,16 +70,16 @@ if __name__ == '__main__':
     pattern = "/archive_data/desarchive/DTS/snmanifest/*/*.json"
     print "# Will read SN Manifest times from: %s" % pattern
     times = read_json(pattern)
-    
+
     allequal = True
     print "# Will compare NITES for %s dates" % len(times)
     for date in times:
-   
+
         date_old = convert_utc_str_to_nite_old(date)
         date_new = misctime.convert_utc_str_to_nite(date)
 
         print date_new, date_old
-        
+
         if date_new != date_old:
             allequal = False
             print "# ERROR for %s" % date

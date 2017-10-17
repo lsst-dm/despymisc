@@ -15,11 +15,13 @@ import os
 import errno
 import signal
 
+
 class Popen(subprocess.Popen):
     """
     This class defines a superclass of the Popen module.
     It defines a wait4 method for Popen.
     """
+
     def __init__(self, args, **kwargs):
         self.rusage = None
         subprocess.Popen.__init__(self, args, **kwargs)

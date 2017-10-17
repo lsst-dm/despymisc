@@ -4,7 +4,7 @@
 import sys
 
 filename = sys.argv[1]
-col      = int(sys.argv[2])
+col = int(sys.argv[2])
 
 IDs = []
 for line in open(filename).readlines():
@@ -13,7 +13,7 @@ for line in open(filename).readlines():
         continue
 
     vals = line.split()
-    ID   = vals[col]
+    ID = vals[col]
     if ID not in IDs:
         print line.rstrip()
         IDs.append(ID)

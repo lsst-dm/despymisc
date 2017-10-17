@@ -163,5 +163,5 @@ if __name__ == "__main__":
         pp.pprint(Xmlslurper(sys.argv[1], tablelist).gettables())
     else:
         for f in glob.glob('*.xml'):
-            print "f: ", f
+            print(("f: ", f))
             pp.pprint(Xmlslurper(f, tablelist).gettables())

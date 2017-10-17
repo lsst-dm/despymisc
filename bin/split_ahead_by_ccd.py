@@ -28,7 +28,7 @@ if __name__ == "__main__":
                         help="Print progress messages to stdout")
     args = parser.parse_args()
     if (args.verbose):
-        print args
+        print(args)
     #
     #  Make sure that required arguments are present and appear OK.
     #
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         exit(1)
 
     if (not(os.path.isfile(args.infile))):
-        print("Missing input file: {:s}".format(args.infile))
+        print(("Missing input file: {:s}".format(args.infile)))
         print("Aborting!")
         exit(1)
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         exit(1)
 
     if (args.ccdlist == "All"):
-        ccd_list = range(1, 63)
+        ccd_list = list(range(1, 63))
     else:
         ccd_list = fwsplit(args.ccdlist)
 

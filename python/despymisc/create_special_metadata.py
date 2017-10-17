@@ -64,7 +64,7 @@ def create_field(object):
 def convert_ra_to_deg(ra):
     """Return RA in degrees.
     """
-    xx = map(float, ra.split(':'))
+    xx = list(map(float, ra.split(':')))
     radeg = 15.0 * (xx[0] + xx[1]/60.0 + xx[2]/3600.0)
     return round(radeg, 6)
 
@@ -74,7 +74,7 @@ def convert_dec_to_deg(dec):
     """
     lteldec = dec.split(':')
     firstchar = lteldec[0][0]
-    xx = map(float, lteldec)
+    xx = list(map(float, lteldec))
     if firstchar == '-':
         tdecsgn = -1.
     else:

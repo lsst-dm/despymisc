@@ -17,5 +17,5 @@ for line in open(filename).readlines():
     vals = line.split()
     ID = vals[col]
     if ID not in IDs:
-        print line.rstrip()
+        print(line.rstrip())
         IDs.append(ID)

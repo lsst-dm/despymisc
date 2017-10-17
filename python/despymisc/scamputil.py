@@ -56,7 +56,7 @@ def split_ahead_by_ccd(infile, outfile, ccd_list):
     ccd_check = True
     for ccd in ccd_list:
         if (not(ccd in head_set)):
-            print("Warning: CCDNUM=%d is not present in %s " % (ccd, infile))
+            print(("Warning: CCDNUM=%d is not present in %s " % (ccd, infile)))
             ccd_check = False
 
     if (not(ccd_check)):

@@ -56,8 +56,8 @@ def fwdebug_check(msglvl, envdbgvar):
 
 
 def fwdebug_print(msgstr, msgprefix=''):
-    print "%s%s - %s - %s" % (msgprefix, datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
-                              inspect.stack()[1][3], msgstr)
+    print("%s%s - %s - %s" % (msgprefix, datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+                              inspect.stack()[1][3], msgstr))
 
 
 def fwdie(msg, exitcode, depth=1):
@@ -65,7 +65,7 @@ def fwdie(msg, exitcode, depth=1):
     """
     frame = inspect.stack()[depth]
     file = os.path.basename(frame[1])
-    print "\n\n%s:%s:%s: %s" % (file, frame[3], frame[2], msg)
+    print("\n\n%s:%s:%s: %s" % (file, frame[3], frame[2], msg))
 
     sys.exit(exitcode)
 
@@ -78,8 +78,8 @@ def fwsplit(fullstr, delim=','):
     for item in [x.strip() for x in fullstr.split(delim)]:
         m = re.match("(\d+):(\d+)", item)
         if m:
-            items.extend(map(str, range(int(m.group(1)),
-                                        int(m.group(2))+1)))
+            items.extend(list(map(str, list(range(int(m.group(1)),
+                                                  int(m.group(2))+1)))))
         else:
             items.append(item)
     return items
@@ -96,7 +96,7 @@ def coremakedirs(thedir):
             if exc.errno == errno.EEXIST:
                 pass
             else:
-                print "Error: problems making directory: %s" % exc
+                print("Error: problems making directory: %s" % exc)
                 raise
 
 
@@ -298,23 +298,23 @@ def _recurs_pretty_print_dict(the_dict, out_file, sortit, inc_indent, curr_inden
         if sortit:
             dictitems = sorted(the_dict.items())
         else:
-            dictitems = the_dict.items()
+            dictitems = list(the_dict.items())
 
         for key, value in dictitems:
             if isinstance(value, dict):
-                print >> out_file, ' ' * curr_indent + str(key)
+                print(' ' * curr_indent + str(key), file=out_file)
                 _recurs_pretty_print_dict(value, out_file, sortit, inc_indent,
                                           curr_indent + inc_indent)
             else:
-                print >> out_file, ' ' * curr_indent + str(key) + \
-                    " = " + str(value)
+                print(' ' * curr_indent + str(key) +
+                      " = " + str(value), file=out_file)
 
 
 def get_config_vals(extra_info, config, keylist):
     """Search given dicts for specific values.
     """
     info = {}
-    for k, stat in keylist.items():
+    for k, stat in list(keylist.items()):
         if extra_info is not None and k in extra_info:
             info[k] = extra_info[k]
         elif config is not None and k in config:
@@ -345,7 +345,7 @@ def dynamically_load_class(class_desc):
 def updateOrderedDict(d, u):
     """Update dictionary recursively to update nested dictionaries.
     """
-    for k, v in u.iteritems():
+    for k, v in u.items():
         if isinstance(v, Mapping):
             if d.__contains__(k):
                 d2 = d.get(k)
@@ -379,7 +379,7 @@ def elapsed_time(t1, verbose=False):
     t2 = time.time()
     stime = "%dm %2.2fs" % (int((t2-t1)/60.), (t2-t1) - 60*int((t2-t1)/60.))
     if verbose:
-        print "# Elapsed time: %s" % stime
+        print("# Elapsed time: %s" % stime)
     return stime
 
 
@@ -399,7 +399,7 @@ def query2dict_of_lists(query, dbhandle):
     desc = [d[0] for d in cur.description]
 
     querydic = {} # We will populate this one
-    cols = zip(*list_of_tuples)
+    cols = list(zip(*list_of_tuples))
     for k in range(len(cols)):
         key = desc[k]
         querydic[key] = cols[k]

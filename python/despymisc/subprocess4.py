@@ -48,6 +48,6 @@ class Popen(subprocess.Popen):
             if pid == self.pid:
                 self._handle_exitstatus(sts)
             if self.returncode == -signal.SIGSEGV:
-                print "SEGMENTATION FAULT"
+                print("SEGMENTATION FAULT")
 
             return self.returncode

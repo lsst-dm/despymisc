@@ -60,23 +60,23 @@ if __name__ == '__main__':
 
     # Testing old vs new code for many objects
     pattern = "/archive_data/desarchive/DTS/snmanifest/*/*.json"
-    print "# Will read SN Manifest times from: %s" % pattern
+    print("# Will read SN Manifest times from: %s" % pattern)
     times = read_json(pattern)
 
     allequal = True
-    print "# Will compare NITES for %s dates" % len(times)
+    print("# Will compare NITES for %s dates" % len(times))
     for date in times:
 
         date_old = convert_utc_str_to_nite_old(date)
         date_new = misctime.convert_utc_str_to_nite(date)
 
-        print date_new, date_old
+        print(date_new, date_old)
 
         if date_new != date_old:
             allequal = False
-            print "# ERROR for %s" % date
-            print "A: %s" % date_new
-            print "B: %s" % date_old
-            print "-----"
+            print("# ERROR for %s" % date)
+            print("A: %s" % date_new)
+            print("B: %s" % date_old)
+            print("-----")
     if allequal:
-        print "All %s dates are consistent." % len(times)
+        print("All %s dates are consistent." % len(times))

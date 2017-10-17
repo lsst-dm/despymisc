@@ -12,8 +12,9 @@ USAGE:
 """
 
 import os
-import urllib
-import urllib2
+import urllib.error
+import urllib.parse
+import urllib.request
 from base64 import b64encode
 
 
@@ -34,7 +35,7 @@ def get_credentials(desfile=os.path.join(os.environ['HOME'], '.desservices.ini')
         URL = None
         warning = """WARNING: could not load credentials from .desservices.ini file for section %s
         please make sure sections make sense""" % section
-        print warning
+        print(warning)
 
     return USERNAME, PASSWORD, URL
 
@@ -74,14 +75,14 @@ class Request(object):
         else:
             self.url = url
 
-        urllib_req = urllib2.Request(self.url)
+        urllib_req = urllib.request.Request(self.url)
         if any(self.auth):
             urllib_req.add_header('Authorization',
                                   'Basic ' + b64encode(self.auth[0]+':'+self.auth[1]))
         try:
-            self.response = urllib2.urlopen(urllib_req,
-                                            urllib.urlencode(self.data))
-        except Exception, e:
+            self.response = urllib.request.urlopen(urllib_req,
+                                            urllib.parse.urlencode(self.data))
+        except Exception as e:
             self.error_status = (True, str(e))
 
     def get_read(self, url):
@@ -92,14 +93,14 @@ class Request(object):
         else:
             self.url = url
 
-        urllib_req = urllib2.Request(self.url)
+        urllib_req = urllib.request.Request(self.url)
         if any(self.auth):
             urllib_req.add_header('Authorization',
                                   'Basic ' + b64encode(self.auth[0]+':'+self.auth[1]))
         try:
-            self.response = urllib2.urlopen(urllib_req)
+            self.response = urllib.request.urlopen(urllib_req)
             return self.response.read()
-        except Exception, e:
+        except Exception as e:
             self.error_status = (True, str(e))
 
     def download_file(self, url, filename):
@@ -117,12 +118,12 @@ class Request(object):
             self.url = url
 
         url_params = '?'+'&'.join([str(k)+'='+str(v) for k, v in
-                                   params.iteritems()])
-        urllib_req = urllib2.Request(self.url+url_params)
+                                   list(params.items())])
+        urllib_req = urllib.request.Request(self.url+url_params)
         if any(self.auth):
             urllib_req.add_header('Authorization',
                                   'Basic ' + b64encode(self.auth[0]+':'+self.auth[1]))
         try:
-            self.response = urllib2.urlopen(urllib_req)
-        except Exception, e:
+            self.response = urllib.request.urlopen(urllib_req)
+        except Exception as e:
             self.error_status = (True, str(e))

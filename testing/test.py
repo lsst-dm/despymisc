@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 
-"""
-A simple method to compare the old vs new method to compute nite.
-F. Menanteau Nov, 2015
+"""A simple method to compare the old vs new method to compute nite.
 """
 
-###########################################
-# Functions for testing against old method 
 def parse_json(filename):
     import json
     dates = []
-    with open(filename) as data_file:    
+    with open(filename) as data_file:
         data = json.load(data_file)
-        
+
     dates = [item['date'] for item in data["exposures"]]
     dates.append(data['header']['createdAt'])
     return dates
+
 
 def read_json(pattern):
     import glob
@@ -26,14 +23,14 @@ def read_json(pattern):
         all_dates = all_dates + parse_json(file)
     return all_dates
 
-######################################################################
+
 def convert_utc_str_to_nite_old(datestr):
+    """Convert an UTC date string to a nite string.
+    """
     import pytz
     import datetime
     from dateutil.parser import parse
     from dateutil import tz
-
-    """ Convert an UTC date string to a nite string """
 
     # e.g. datestr: 2014-08-15T17:31:02.416533+00:00
     nite = None
@@ -63,23 +60,23 @@ if __name__ == '__main__':
 
     # Testing old vs new code for many objects
     pattern = "/archive_data/desarchive/DTS/snmanifest/*/*.json"
-    print "# Will read SN Manifest times from: %s" % pattern
+    print("# Will read SN Manifest times from: %s" % pattern)
     times = read_json(pattern)
-    
+
     allequal = True
-    print "# Will compare NITES for %s dates" % len(times)
+    print("# Will compare NITES for %s dates" % len(times))
     for date in times:
-   
+
         date_old = convert_utc_str_to_nite_old(date)
         date_new = misctime.convert_utc_str_to_nite(date)
 
-        print date_new, date_old
-        
+        print(date_new, date_old)
+
         if date_new != date_old:
             allequal = False
-            print "# ERROR for %s" % date
-            print "A: %s" % date_new
-            print "B: %s" % date_old
-            print "-----"
+            print("# ERROR for %s" % date)
+            print("A: %s" % date_new)
+            print("B: %s" % date_old)
+            print("-----")
     if allequal:
-        print "All %s dates are consistent." % len(times)
+        print("All %s dates are consistent." % len(times))

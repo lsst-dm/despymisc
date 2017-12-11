@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import os
-import sys
+import os,sys
 import http_requests
 
 
@@ -14,8 +13,8 @@ url3 = "https://desar2.cosmology.illinois.edu/DESFiles/new_archive/Prototype/ref
 #h.download_file(url2,"test2.fits")
 #h.download_file(url3,"test3.fits")
 
-http_requests.download_file(url1, "test1.fits")
-http_requests.download_file(url2, "test2.fits")
-http_requests.download_file(url3, "test3.fits")
+http_requests.download_file(url1,"test1.fits")
+http_requests.download_file(url2,"test2.fits")
+http_requests.download_file(url3,"test3.fits")
 
 sys.exit()

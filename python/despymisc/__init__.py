@@ -2,8 +2,6 @@
 """
 
 __author__ = "Felipe Menanteau, Michelle Gower"
-__version__ = '1.0.3'
-version = __version__
 
 
 #from . import scamputil
